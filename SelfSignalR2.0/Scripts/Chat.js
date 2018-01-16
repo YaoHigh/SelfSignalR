@@ -6,7 +6,7 @@
  
  */
 
-; !function (win, undefined) {
+; !function ($, undefined) {
     var config = {
         msgurl: 'Message',
         chatlogurl: '聊天记录url前缀',
@@ -242,12 +242,13 @@
                 + '    <div class="ChatCore_chatarea" id="ChatCore_chatarea">'
                 + '        <ul class="ChatCore_chatview ChatCore_chatthis"  id="ChatCore_area' + param.type + param.id + '"></ul>'
                 + '    </div>'
-                + '    <div class="ChatCore_tool" style="color:#666;">注：Web聊天中请勿发送过长的文本.</div>'//增加内容
-                + '    <div class="ChatCore_tool" style="display:none;">'
-                + '        <i class="ChatCore_addface" title="发送表情"></i>'
-                + '        <a href="javascript:;"><i class="ChatCore_addimage" title="上传图片"></i></a>'
-                + '        <a href="javascript:;"><i class="ChatCore_addfile" title="上传附件"></i></a>'
-                + '        <a href="" target="_blank" class="ChatCore_seechatlog"><i></i>聊天记录</a>'
+                //+ '    <div class="ChatCore_tool" style="color:#666;">注：Web聊天中请勿发送过长的文本.</div>'//增加内容
+                + '    <div class="ChatCore_tool">'
+                + '        <input id="file" type="file" onchange="return UpdateImg();">'
+                //+ '        <i class="ChatCore_addface" title="发送表情"></i>'
+                //+ '        <a href="javascript:;"><i class="ChatCore_addimage" title="上传图片"></i></a>'
+                //+ '        <a href="javascript:;"><i class="ChatCore_addfile" title="上传附件"></i></a>'
+                //+ '        <a href="" target="_blank" class="ChatCore_seechatlog"><i></i>聊天记录</a>'
                 + '    </div>'
                 + '    <textarea class="ChatCore_write" id="ChatCore_write"></textarea>'
                 + '    <div class="ChatCore_send">'
@@ -437,7 +438,7 @@
                 log.imarea.scrollTop(log.imarea[0].scrollHeight);
 
                 // 调用服务端sendPrivateMessage方法来转发消息
-                systemHub.server.sendPrivateMessage(chatCore.nowchat.id, data.content);
+                systemHub.server.sendPrivateMessage(chatCore.nowchat.id, data.content, 0);
             }
 
         };
@@ -448,6 +449,64 @@
                 log.send();
             }
         });
+    };
+
+    //图片传输
+    chatCore.tranfilesmit = function () {
+        var node = chatCore.node, log = {};
+        node.sendbtn = $('#ChatCore_sendbtn');
+        node.imwrite = $('#imgurl');
+
+        //发送
+        //debugger;
+        var data = {
+            content: node.imwrite.val(),
+            id: chatCore.nowchat.id,
+            sign_key: '', //密匙
+            _: +new Date
+        };
+
+        if (data.content.replace(/\s/g, '') === '') {
+            layer.tips('说点啥呗！', '#ChatCore_write', 2);
+            node.imwrite.focus();
+        } else {
+            //此处皆为模拟
+            var keys = chatCore.nowchat.type + chatCore.nowchat.id;
+
+            //聊天模版
+            log.html = function (param, type) {
+                return '<li class="' + (type === 'me' ? 'ChatCore_chateme' : '') + '">'
+                    + '<div class="ChatCore_chatuser">'
+                        + function () {
+                            if (type === 'me') {
+                                return '<span class="ChatCore_chattime">' + param.time + '</span>'
+                                       + '<span class="ChatCore_chatname">' + param.name + '</span>'
+                                       + '<img src="' + param.face + '" >';
+                            } else {
+                                return '<img src="' + param.face + '" >'
+                                       + '<span class="ChatCore_chatname">' + param.name + '</span>'
+                                       + '<span class="ChatCore_chattime">' + param.time + '</span>';
+                            }
+                        }()
+                    + '</div>'
+                    + '<div class="ChatCore_chatsay"><img src="' + param.content + '"><em class="ChatCore_zero"></em></div>'
+                + '</li>';
+            };
+
+            log.imarea = chatCore.chatbox.find('#ChatCore_area' + keys);
+
+            log.imarea.append(log.html({
+                time: new Date().toLocaleString(),
+                name: config.user.name,
+                face: config.user.face,
+                content: data.content
+            }, 'me'));
+            node.imwrite.val('').focus();
+            log.imarea.scrollTop(log.imarea[0].scrollHeight);
+
+            // 调用服务端SendPrivateImg方法来转发消息
+            systemHub.server.sendPrivateMessage(chatCore.nowchat.id, data.content, 1);
+        };
     };
 
     //事件
@@ -579,11 +638,12 @@
         };
 
         //接收消息
-        systemHub.client.receivePrivateMessage = function (fromUserId, userName, message) {
+        systemHub.client.receivePrivateMessage = function (fromUserId, userName, message, type) {
 
             var node = chatCore.node, log = {}, othis = $("#ChatCore_friend_list li[data-id=" + fromUserId + "]");
             //聊天模版
-            log.html = function (param, type) {
+            log.html = function (param) {
+                debugger;
                 return '<li class="' + (type === 'me' ? 'ChatCore_chateme' : '') + '">'
                     + '<div class="ChatCore_chatuser">'
                         + function () {
@@ -598,7 +658,12 @@
                             }
                         }()
                     + '</div>'
+                if (type == 1) {
+                    + '<div class="ChatCore_chatsay"><img src="' + param.content + '"><em class="ChatCore_zero"></em></div>'
+                } else {
                     + '<div class="ChatCore_chatsay">' + param.content + '<em class="ChatCore_zero"></em></div>'
+                }
+
                 + '</li>';
             };
             chatCore.popchatbox(othis);
@@ -702,4 +767,6 @@
         chatCore.FangsiInit();
     }());
 
-}(window);
+    $.chatCore = chatCore;
+
+}(jQuery,"");

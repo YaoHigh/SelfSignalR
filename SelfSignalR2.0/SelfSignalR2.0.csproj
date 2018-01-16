@@ -142,6 +142,12 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\bootstrap-fileinput\css\fileinput.css" />
+    <Content Include="Content\bootstrap-fileinput\css\fileinput.min.css" />
+    <Content Include="Content\bootstrap-fileinput\img\loading-sm.gif" />
+    <Content Include="Content\bootstrap-fileinput\img\loading.gif" />
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Css\Chat.css" />
@@ -160,6 +166,8 @@
     <Content Include="Scripts\Chat.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <Content Include="Scripts\jquery-2.2.2.js" />
+    <Content Include="Scripts\jquery-2.2.2.min.js" />
     <Content Include="Scripts\jquery.signalR-2.2.2.js" />
     <Content Include="Scripts\jquery.signalR-2.2.2.min.js" />
     <Content Include="Scripts\layer-v3.1.1\layer\layer.js" />
@@ -207,6 +215,7 @@
     <Content Include="Scripts\layer-v3.1.1\文档\layui社区.url" />
     <Content Include="Scripts\layer-v3.1.1\文档\获得layim.url" />
     <Content Include="Views\Home\Chat.cshtml" />
+    <Content Include="Scripts\jquery-2.2.2.min.map" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

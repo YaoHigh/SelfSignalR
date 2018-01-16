@@ -9,13 +9,16 @@
     <meta name="viewport" content="width=device-width" />
     <title>酷炫聊天</title>
     <link href="~/Content/Css/Chat.css" rel="stylesheet" />
+    <link href="/Content/bootstrap.min.css" rel="stylesheet">
+    <link href="/Content/bootstrap-fileinput/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
 </head>
 <body>
     <div>
         <p style="font-size:26px; font-weight:bolder; color:cornflowerblue;">Asp.net MVC中使用SignalR实现仿QQ聊天的即时通信功能</p>
+        @Html.Hidden("imgurl");
     </div>
-
-    <script type="text/javascript" src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery-2.2.2.min.js"></script>
+    @*<script type="text/javascript" src="~/Scripts/jquery-1.10.2.min.js"></script>*@
     <script src="~/Scripts/layer/layer.min.js"></script>
     <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
     <script src="~/signalr/hubs"></script>
@@ -27,5 +30,82 @@
         var username = "@Session["username"]";
     </script>
     <script src="~/Scripts/Chat.js"></script>
+
+    <script type="text/javascript">
+        function UpdateImg() {
+            var formData = new FormData();
+            var file = $("#file")[0].files[0];
+            var nm = file.name.split('.');
+            var img = "jpg,png,jpeg,gif,bmp";
+            if (img.indexOf(nm[nm.length - 1]) < 0) {
+                var tfile = document.getElementById("file");
+                if (tfile.outerHTML) {
+                    tfile.outerHTML = tfile.outerHTML;
+                } else { // FF(包括3.5)
+                    tfile.value = "";
+                }
+                alert("您选择的文件无法上传!");
+                return false;
+            } else {
+                formData.append("file", $("#file")[0].files[0]);
+                $.ajax({
+                    url: "@Url.Action("ImgUpload")",
+                    type: "POST",
+                    dataType: "json",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (result) {
+                        console.log(result);
+                        if (result.success) {
+                            $("#imgurl").val(result.imgurl);
+                            //debugger;
+                            $.chatCore.tranfilesmit();
+                        } else {
+                            console.log(result.msg);
+                            $("#sendmessage").trigger("click");
+                        }
+                    }
+                });
+            }
+        }
+        $(function () {
+            var userName = '@Session["username"]';
+            $('#username').html(userName);
+            // 引用自动生成的集线器代理
+            var chat = $.connection.chatHub;
+            // 定义服务器端调用的客户端sendMessage来显示新消息
+
+            chat.client.sendMessage = function (name, message) {
+                // 向页面添加消息
+                $('#discussion').append('<li><strong>' + htmlEncode(name)
+                    + '</strong>: ' + htmlEncode(message) + '</li>');
+            };
+
+            chat.client.receiveImage = function (name, base64) {
+                // 向页面添加消息
+                $('#discussion').append('<image style="width:auto;height:100px;" src=' + base64
+                    + '/>');
+            };
+
+            $('#sendmessage').click(function() {
+                var imagesJson = $('.file-preview-image').map(function() {
+                    var $this = $(this);
+                    return {
+                        image: $this.attr('src'),
+                        filename: $this.attr('data-filename')
+                    };
+                }).toArray();
+
+                chat.server.sendImage(userName, imagesJson);
+            });
+        });
+
+    // 为显示的消息进行Html编码
+    function htmlEncode(value) {
+        var encodedValue = $('<div />').text(value).html();
+        return encodedValue;
+    }
+    </script>
 </body>
 </html>

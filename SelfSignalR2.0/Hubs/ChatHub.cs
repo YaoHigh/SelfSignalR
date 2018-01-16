@@ -53,7 +53,8 @@ namespace SelfSignalR2._0.Hubs
         /// </summary>
         /// <param name="toUserId">接收方用户连接ID</param>
         /// <param name="message">内容</param>
-        public void SendPrivateMessage(string toUserId, string message)
+        /// <param name="type">0文字,1图片</param>
+        public void SendPrivateMessage(string toUserId, string message,int type)
         {
             var fromUserId = Context.ConnectionId;
 
@@ -63,7 +64,7 @@ namespace SelfSignalR2._0.Hubs
             if (toUser != null && fromUser != null)
             {   
                 // send to 
-                Clients.Client(toUserId).receivePrivateMessage(fromUserId, fromUser.UserName, message);
+                Clients.Client(toUserId).receivePrivateMessage(fromUserId, fromUser.UserName, message, type);
 
                 // send to caller user
                 // Clients.Caller.sendPrivateMessage(toUserId, fromUser.UserName, message);
