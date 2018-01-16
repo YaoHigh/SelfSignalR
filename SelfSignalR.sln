@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelfSignalR", "SelfSignalR\SelfSignalR.csproj", "{A72210E8-FEE3-435D-94E7-8F56265EAC96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelfSignalR2.0", "SelfSignalR2.0\SelfSignalR2.0.csproj", "{10962D37-5522-49CE-B9B6-660BAEE4C00B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A72210E8-FEE3-435D-94E7-8F56265EAC96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A72210E8-FEE3-435D-94E7-8F56265EAC96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A72210E8-FEE3-435D-94E7-8F56265EAC96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A72210E8-FEE3-435D-94E7-8F56265EAC96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10962D37-5522-49CE-B9B6-660BAEE4C00B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10962D37-5522-49CE-B9B6-660BAEE4C00B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10962D37-5522-49CE-B9B6-660BAEE4C00B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10962D37-5522-49CE-B9B6-660BAEE4C00B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

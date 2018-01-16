@@ -1,0 +1,36 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>酷炫聊天</title>
+    <link href="~/Content/Css/Chat.css" rel="stylesheet" />
+</head>
+<body>
+    <div>
+        <p style="font-size:26px; font-weight:bolder; color:cornflowerblue;">Asp.net MVC中使用SignalR实现仿QQ聊天的即时通信功能</p>
+    </div>
+
+    <script type="text/javascript" src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/layer-v3.1.1/layer/layer.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            //prompt层
+            layer.prompt({ title: '请输入账号', formType: 2 }, function (text, index) {
+                layer.close(index);
+                window.location.href = "@Url.Action("Chat")?name=" + text;
+            });
+        })
+    </script>
+    <script type="text/javascript">
+        //用户编号
+        var userid = "@Session["userid"]";
+        //用户名
+        var username = "@Session["username"]";
+    </script>
+</body>
+</html>
