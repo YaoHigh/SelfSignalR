@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.SignalR;
+using SelfSignalR2._0.Controllers;
 using SelfSignalR2._0.Models;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,29 @@ namespace SelfSignalR2._0.Hubs
         public void Connect(string userId, string userName)
         {
             var connnectId = Context.ConnectionId;
+            string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "userinfo.xml");
+            List<UserInfo> usList = XmlHelper.ReaderXml(path);
+            UserInfo us = (from c in usList
+                           where c.UserName == userName
+                           select c).FirstOrDefault();
+            if (us == null || string.IsNullOrEmpty(us.UserId))
+            {
+                userId = Guid.NewGuid().ToString().ToUpper();
+                us = new UserInfo();
+                us.UserId = userId;
+                us.UserName = userName;
+                us.ConnectionId = Context.ConnectionId;
+                us.LastLoginTime = DateTime.Now;
+
+                XmlHelper.WriteXml(us, path);
+            }
+            else
+            {
+                userId = us.UserId;
+                us.ConnectionId = connnectId;
+                us.LastLoginTime = DateTime.Now;
+                XmlHelper.UpdateXml(us, path);
+            }
 
             if (OnlineUsers.Count(x => x.ConnectionId == connnectId) == 0)
             {

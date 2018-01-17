@@ -1,5 +1,6 @@
 ﻿@{
     Layout = null;
+    
 }
 
 <!DOCTYPE html>
@@ -9,8 +10,6 @@
     <meta name="viewport" content="width=device-width" />
     <title>酷炫聊天</title>
     <link href="~/Content/Css/Chat.css" rel="stylesheet" />
-    <link href="/Content/bootstrap.min.css" rel="stylesheet">
-    <link href="/Content/bootstrap-fileinput/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
 </head>
 <body>
     <div>
@@ -25,9 +24,9 @@
 
     <script type="text/javascript">
         //用户编号
-        var userid = "@Session["userid"]";
+        var userid = "";
         //用户名
-        var username = "@Session["username"]";
+        var username = "@ViewBag.username";
     </script>
     <script src="~/Scripts/Chat.js"></script>
 

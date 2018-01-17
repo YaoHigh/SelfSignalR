@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SelfSignalR2._0.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,8 +17,7 @@ namespace SelfSignalR2._0.Controllers
 
         public ActionResult Chat(string name)
         {
-            Session["userid"] = Guid.NewGuid().ToString().ToUpper();
-            Session["username"] = name;
+            ViewBag.username = name;
             return View();
         }
 

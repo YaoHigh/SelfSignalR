@@ -58,6 +58,9 @@
     },
     dom = [$(window), $(document), $('html'), $('body')],
     chatCore = {},
+
+    // 引用自动生成的集线器代理
+    //$.connection.hub.url = 'http://192.165.1.118:118/signalr',
     systemHub = $.connection.chatHub,
     onlinenum = 0;//在线人数
 
@@ -594,6 +597,7 @@
         // 连接IM服务器成功
         // 主要是更新在线用户
         systemHub.client.onConnected = function (id, userName, allUsers) {
+            
             var node = chatCore.node, myf = node.list.eq(0), str = '', i = 0;
             myf.addClass('loading');
             onlinenum = allUsers.length;
@@ -602,7 +606,10 @@
                      + '<h5><i></i><span class="ChatCore_parentname">在线用户</span><em class="ChatCore_nums">（' + onlinenum + '）</em></h5>'
                      + '<ul id="ChatCore_friend_list" class="ChatCore_chatlist">';
                 for (; i < onlinenum; i++) {
-                    str += '<li id="userid-' + allUsers[i].UserID + '" data-id="' + allUsers[i].ConnectionId + '" class="ChatCore_childnode" type="one"><img src="/Content/Images/001.jpg?' + allUsers[i].UserID + '"  class="ChatCore_oneface"><span  class="ChatCore_onename">' + allUsers[i].UserName + '(' + ')</span><em class="ChatCore_time">' + allUsers[i].LoginTime + '</em></li>';
+                    //if (id != allUsers[i].ConnectionId) {
+                        str += '<li id="userid-' + allUsers[i].UserID + '" data-id="' + allUsers[i].ConnectionId + '" class="ChatCore_childnode" type="one"><img src="/Content/Images/001.jpg?' + allUsers[i].UserID + '"  class="ChatCore_oneface"><span  class="ChatCore_onename">' + allUsers[i].UserName + '</span><em class="ChatCore_time">' + allUsers[i].LoginTime + '</em></li>';
+                    //}
+                    
                 }
                 str += '</ul></li>';
                 myf.html(str);
@@ -643,7 +650,11 @@
             var node = chatCore.node, log = {}, othis = $("#ChatCore_friend_list li[data-id=" + fromUserId + "]");
             //聊天模版
             log.html = function (param) {
-                debugger;
+               // debugger;
+                var imgcontent = param.content;
+                if (type == 1) {
+                    imgcontent = '<img src="' + param.content + '">';
+                }
                 return '<li class="' + (type === 'me' ? 'ChatCore_chateme' : '') + '">'
                     + '<div class="ChatCore_chatuser">'
                         + function () {
@@ -658,11 +669,7 @@
                             }
                         }()
                     + '</div>'
-                if (type == 1) {
-                    + '<div class="ChatCore_chatsay"><img src="' + param.content + '"><em class="ChatCore_zero"></em></div>'
-                } else {
-                    + '<div class="ChatCore_chatsay">' + param.content + '<em class="ChatCore_zero"></em></div>'
-                }
+                + '<div class="ChatCore_chatsay">' + imgcontent + '<em class="ChatCore_zero"></em></div>'
 
                 + '</li>';
             };
