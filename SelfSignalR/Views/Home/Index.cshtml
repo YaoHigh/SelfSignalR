@@ -20,24 +20,10 @@
 
     <script>
         $(function () {
-            // 1、访问发布的程序 引用方法
-            // $.connection.hub.url = 'http://192.165.1.162:1030/signalr';
-            // var chat = $.connection.chatHub;
-
-            // 2、引用自动生成的集线器代理 必须用小写字母开头
+            // 1、引用自动生成的集线器代理 必须用小写字母开头
             var chat = $.connection.chatHub;
 
-            // 定义服务器端调用的客户端sendMessage来显示新消息
-            chat.client.sendMessage = function (name, message) {
-                // 向页面添加消息
-                $('#discussion').append('<li><strong>' + htmlEncode(name)
-                    + '</strong>: ' + htmlEncode(message) + '</li>');
-            };
-
-            // 设置焦点到输入框
-            $('#message').focus();
-
-            // 开始连接服务器 done函数表明建立连接成功后为发送按钮注册了一个click事件
+            // 2、开始连接服务器 done函数表明建立连接成功后为发送按钮注册了一个click事件
             $.connection.hub.start().done(function () {
                 $('#sendmessage').click(function () {
                     // 调用服务器端集线器的Send方法 也要小写开头
@@ -46,6 +32,16 @@
                     $('#message').val('').focus();
                 });
             });
+
+            // 3、定义服务器端调用的客户端sendMessage来显示新消息
+            chat.client.sendMessage = function (name, message) {
+                // 向页面添加消息
+                $('#discussion').append('<li><strong>' + htmlEncode(name)
+                    + '</strong>: ' + htmlEncode(message) + '</li>');
+            };
+
+            // 设置焦点到输入框
+            $('#message').focus();
         });
 
         // 为显示的消息进行Html编码

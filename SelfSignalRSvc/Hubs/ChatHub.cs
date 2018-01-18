@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace SelfSignalR.Hubs
+namespace SelfSignalRSvc
 {
     public class ChatHub : Hub
     {
@@ -24,7 +24,7 @@ namespace SelfSignalR.Hubs
         /// <returns></returns>
         public override Task OnConnected()
         {
-            Trace.WriteLine("客户端连接成功");
+            Trace.WriteLine("客户端连接成功:" + Context.ConnectionId);
             return base.OnConnected();
         }
     }
