@@ -70,7 +70,7 @@ namespace SelfSignalR2._0.Controllers
         }
 
         /// <summary>
-        /// 替换xml
+        /// 更新xml
         /// </summary>
         /// <param name="us"></param>
         /// <param name="xmlFilePath"></param>
