@@ -14,7 +14,7 @@
 <body>
     <div>
         <p style="font-size:26px; font-weight:bolder; color:cornflowerblue;">Asp.net MVC中使用SignalR实现仿QQ聊天的即时通信功能</p>
-        @Html.Hidden("imgurl");
+        @Html.Hidden("imgurl")
     </div>
     <script type="text/javascript" src="~/Scripts/jquery-2.2.2.min.js"></script>
     @*<script type="text/javascript" src="~/Scripts/jquery-1.10.2.min.js"></script>*@
@@ -59,10 +59,13 @@
                         if (result.success) {
                             $("#imgurl").val(result.imgurl);
                             //debugger;
-                            $.chatCore.tranfilesmit();
+                            $("#ChatCore_sendbtn").trigger("click");
+                            // $.chatCore.tranfilesmit();
+                            $("#imgurl").val("");
+                            
                         } else {
                             console.log(result.msg);
-                            $("#sendmessage").trigger("click");
+                            $("#ChatCore_sendbtn").trigger("click");
                         }
                     }
                 });

@@ -21,7 +21,7 @@
         },
         user: { //当前用户信息
             name: username,
-            face: "/Content/Images/001.jpg"
+            face: "/Content/Images/001.png"
         },
 
         //自动回复内置文案，也可动态读取数据库配置
@@ -249,7 +249,7 @@
                 + '    <div class="ChatCore_tool">'
                 + '        <input id="file" type="file" onchange="return UpdateImg();">'
                 //+ '        <i class="ChatCore_addface" title="发送表情"></i>'
-                //+ '        <a href="javascript:;"><i class="ChatCore_addimage" title="上传图片"></i></a>'
+                + '        <a href="javascript:;"><i class="ChatCore_addimage" title="上传图片"></i></a>'
                 //+ '        <a href="javascript:;"><i class="ChatCore_addfile" title="上传附件"></i></a>'
                 //+ '        <a href="" target="_blank" class="ChatCore_seechatlog"><i></i>聊天记录</a>'
                 + '    </div>'
@@ -343,7 +343,7 @@
             type: othis.attr('type'),
             name: othis.find('.ChatCore_onename').text(),  //用户名
             face: othis.find('.ChatCore_oneface').attr('src'),  //用户头像
-            href: 'http://www.cnblogs.com/zhili/'//config.hosts + 'user/' + dataId //用户主页
+            href: 'http://www.cnblogs.com/highest/'//config.hosts + 'user/' + dataId //用户主页
         }, key = param.type + dataId;
         if (!config.chating[key]) {
             chatCore.popchat(param);
@@ -392,23 +392,21 @@
         var node = chatCore.node, log = {};
         node.sendbtn = $('#ChatCore_sendbtn');
         node.imwrite = $('#ChatCore_write');
-
         //发送
         log.send = function () {
-            var data = {
-                content: node.imwrite.val(),
-                id: chatCore.nowchat.id,
-                sign_key: '', //密匙
-                _: +new Date
-            };
+            // 如果有图片。默认上传图片。如果没有，就是文字
+            var imgurl = $("#imgurl").val();
+            if (imgurl) {
 
-            if (data.content.replace(/\s/g, '') === '') {
-                layer.tips('说点啥呗！', '#ChatCore_write', 2);
-                node.imwrite.focus();
-            } else {
+                var data = {
+                    content: imgurl,
+                    id: chatCore.nowchat.id,
+                    sign_key: '', //密匙
+                    _: +new Date
+                };
+
                 //此处皆为模拟
                 var keys = chatCore.nowchat.type + chatCore.nowchat.id;
-
                 //聊天模版
                 log.html = function (param, type) {
                     return '<li class="' + (type === 'me' ? 'ChatCore_chateme' : '') + '">'
@@ -425,7 +423,7 @@
                                 }
                             }()
                         + '</div>'
-                        + '<div class="ChatCore_chatsay">' + param.content + '<em class="ChatCore_zero"></em></div>'
+                        + '<div class="ChatCore_chatsay"><img src="' + imgurl + '"><em class="ChatCore_zero"></em></div>'
                     + '</li>';
                 };
 
@@ -441,8 +439,57 @@
                 log.imarea.scrollTop(log.imarea[0].scrollHeight);
 
                 // 调用服务端sendPrivateMessage方法来转发消息
-                systemHub.server.sendPrivateMessage(chatCore.nowchat.id, data.content, 0);
+                systemHub.server.sendPrivateMessage(chatCore.nowchat.id, data.content, 1);
+
+            } else {
+                var data = {
+                    content: node.imwrite.val(),
+                    id: chatCore.nowchat.id,
+                    sign_key: '', //密匙
+                    _: +new Date
+                };
+                if (data.content.replace(/\s/g, '') === '') {
+                    layer.tips('说点啥呗！', '#ChatCore_write', 2);
+                    node.imwrite.focus();
+                } else {
+                    //此处皆为模拟
+                    var keys = chatCore.nowchat.type + chatCore.nowchat.id;
+                    //聊天模版
+                    log.html = function (param, type) {
+                        return '<li class="' + (type === 'me' ? 'ChatCore_chateme' : '') + '">'
+                            + '<div class="ChatCore_chatuser">'
+                                + function () {
+                                    if (type === 'me') {
+                                        return '<span class="ChatCore_chattime">' + param.time + '</span>'
+                                               + '<span class="ChatCore_chatname">' + param.name + '</span>'
+                                               + '<img src="' + param.face + '" >';
+                                    } else {
+                                        return '<img src="' + param.face + '" >'
+                                               + '<span class="ChatCore_chatname">' + param.name + '</span>'
+                                               + '<span class="ChatCore_chattime">' + param.time + '</span>';
+                                    }
+                                }()
+                            + '</div>'
+                            + '<div class="ChatCore_chatsay">' + param.content + '<em class="ChatCore_zero"></em></div>'
+                        + '</li>';
+                    };
+
+                    log.imarea = chatCore.chatbox.find('#ChatCore_area' + keys);
+
+                    log.imarea.append(log.html({
+                        time: new Date().toLocaleString(),
+                        name: config.user.name,
+                        face: config.user.face,
+                        content: data.content
+                    }, 'me'));
+                    node.imwrite.val('').focus();
+                    log.imarea.scrollTop(log.imarea[0].scrollHeight);
+
+                    // 调用服务端sendPrivateMessage方法来转发消息
+                    systemHub.server.sendPrivateMessage(chatCore.nowchat.id, data.content, 0);
+                }
             }
+
 
         };
         node.sendbtn.on('click', log.send);
@@ -452,64 +499,6 @@
                 log.send();
             }
         });
-    };
-
-    //图片传输
-    chatCore.tranfilesmit = function () {
-        var node = chatCore.node, log = {};
-        node.sendbtn = $('#ChatCore_sendbtn');
-        node.imwrite = $('#imgurl');
-
-        //发送
-        //debugger;
-        var data = {
-            content: node.imwrite.val(),
-            id: chatCore.nowchat.id,
-            sign_key: '', //密匙
-            _: +new Date
-        };
-
-        if (data.content.replace(/\s/g, '') === '') {
-            layer.tips('说点啥呗！', '#ChatCore_write', 2);
-            node.imwrite.focus();
-        } else {
-            //此处皆为模拟
-            var keys = chatCore.nowchat.type + chatCore.nowchat.id;
-
-            //聊天模版
-            log.html = function (param, type) {
-                return '<li class="' + (type === 'me' ? 'ChatCore_chateme' : '') + '">'
-                    + '<div class="ChatCore_chatuser">'
-                        + function () {
-                            if (type === 'me') {
-                                return '<span class="ChatCore_chattime">' + param.time + '</span>'
-                                       + '<span class="ChatCore_chatname">' + param.name + '</span>'
-                                       + '<img src="' + param.face + '" >';
-                            } else {
-                                return '<img src="' + param.face + '" >'
-                                       + '<span class="ChatCore_chatname">' + param.name + '</span>'
-                                       + '<span class="ChatCore_chattime">' + param.time + '</span>';
-                            }
-                        }()
-                    + '</div>'
-                    + '<div class="ChatCore_chatsay"><img src="' + param.content + '"><em class="ChatCore_zero"></em></div>'
-                + '</li>';
-            };
-
-            log.imarea = chatCore.chatbox.find('#ChatCore_area' + keys);
-
-            log.imarea.append(log.html({
-                time: new Date().toLocaleString(),
-                name: config.user.name,
-                face: config.user.face,
-                content: data.content
-            }, 'me'));
-            node.imwrite.val('').focus();
-            log.imarea.scrollTop(log.imarea[0].scrollHeight);
-
-            // 调用服务端SendPrivateImg方法来转发消息
-            systemHub.server.sendPrivateMessage(chatCore.nowchat.id, data.content, 1);
-        };
     };
 
     //事件
@@ -597,7 +586,6 @@
         // 连接IM服务器成功
         // 主要是更新在线用户
         systemHub.client.onConnected = function (id, userName, allUsers) {
-            
             var node = chatCore.node, myf = node.list.eq(0), str = '', i = 0;
             myf.addClass('loading');
             onlinenum = allUsers.length;
@@ -607,7 +595,7 @@
                      + '<ul id="ChatCore_friend_list" class="ChatCore_chatlist">';
                 for (; i < onlinenum; i++) {
                     //if (id != allUsers[i].ConnectionId) {
-                        str += '<li id="userid-' + allUsers[i].UserID + '" data-id="' + allUsers[i].ConnectionId + '" class="ChatCore_childnode" type="one"><img src="/Content/Images/001.jpg?' + allUsers[i].UserID + '"  class="ChatCore_oneface"><span  class="ChatCore_onename">' + allUsers[i].UserName + '</span><em class="ChatCore_time">' + allUsers[i].LoginTime + '</em></li>';
+                        str += '<li id="userid-' + allUsers[i].UserID + '" data-id="' + allUsers[i].ConnectionId + '" class="ChatCore_childnode" type="one"><img src="/Content/Images/001.png?' + allUsers[i].UserID + '"  class="ChatCore_oneface"><span  class="ChatCore_onename">' + allUsers[i].UserName + '</span><em class="ChatCore_time">' + allUsers[i].LoginTime + '</em></li>';
                     //}
                     
                 }
@@ -624,7 +612,7 @@
             onlinenum = onlinenum + 1;
             $(".ChatCore_nums").html("（" + onlinenum + "）");
             var myf = $('#ChatCore_friend_list'), str = '';
-            str += '<li id="userid-' + userId + '" data-id="' + id + '" class="ChatCore_childnode" type="one"><img src="/Content/Images/001.jpg?' + userId + '"  class="ChatCore_oneface"><span  class="ChatCore_onename">' + userName + '(' + ')</span><em class="ChatCore_time">' + loginTime + '</em></li>';
+            str += '<li id="userid-' + userId + '" data-id="' + id + '" class="ChatCore_childnode" type="one"><img src="/Content/Images/001.png?' + userId + '"  class="ChatCore_oneface"><span  class="ChatCore_onename">' + userName + '(' + ')</span><em class="ChatCore_time">' + loginTime + '</em></li>';
             myf.append(str);
         };
 
